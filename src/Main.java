@@ -29,12 +29,12 @@ public class Main extends Application
     @Override
     public void start(Stage stage) throws Exception
     {
-        stage.setTitle("Pomodoro Timer");
         stage.initStyle(StageStyle.UTILITY);
         stage.setResizable(false);
 
         Parent root = FXMLLoader.load(getClass().getResource("Pomodoro.fxml"));
-        Scene scene = new Scene(root, 700, 200);
+        Scene scene = new Scene(root);
+        System.out.println(root.getLayoutX() + root.getLayoutY());
 
         stage.setScene(scene);
         stage.show();
