@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<AnchorPane maxHeight="200" maxWidth="400" minHeight="200" minWidth="400" prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
       <GridPane layoutX="78.0" layoutY="47.0" prefHeight="200.0" prefWidth="400.0" style="-fx-background-color: #b5a9c9;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -20,9 +20,8 @@
           <RowConstraints maxHeight="170.0" minHeight="10.0" prefHeight="145.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <GridPane style="-fx-background-color: #8272a1#8272a1;">
+            <GridPane style="-fx-background-color: #8272a1;">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
@@ -31,23 +30,20 @@
                <children>
                   <Pane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Text fill="#e8e4f0" layoutX="36.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pomodoro Timer">
+                        <Button fx:id="startButton" layoutX="274.0" layoutY="14.0" mnemonicParsing="false" onAction="#startTimer" prefHeight="27.0" prefWidth="47.0" style="-fx-background-color: #e8e4f0;" text="Start" />
+                        <Button fx:id="stopButton" layoutX="339.0" layoutY="14.0" mnemonicParsing="false" onAction="#stopTimer" prefHeight="27.0" prefWidth="47.0" style="-fx-background-color: #e8e4f0;" text="Stop" />
+                        <Text fill="#e8e4f0" layoutX="14.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pomodoro Timer">
                            <font>
                               <Font name="Arial" size="22.0" />
                            </font>
                         </Text>
                      </children>
                   </Pane>
-                  <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
-                     <children>
-                        <Button fx:id="startButton" layoutX="73.0" layoutY="14.0" mnemonicParsing="false" onAction="#startTimer" prefHeight="0.0" prefWidth="55.0" style="-fx-background-color: #e8e4f0;" text="Start" />
-                     </children>
-                  </Pane>
                </children>
             </GridPane>
             <Pane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                <children>
-                  <Text fx:id="timer" fill="#585661" layoutX="108.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00">
+                  <Text fx:id="timerText" fill="#585661" layoutX="108.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00">
                      <font>
                         <Font size="69.0" />
                      </font>

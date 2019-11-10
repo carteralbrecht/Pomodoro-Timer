@@ -7,33 +7,32 @@ import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.sql.Time;
+
 class CountDownTimer
 {
     private static final String timerFormat = "%02d:%02d";
-    private static final Integer STARTMINUTES = 25;
-    private static final Integer STARTSECONDS = 0;
+    private static final Integer STARTMINUTES = 0;
+    private static final Integer STARTSECONDS = 5;
+    private Integer minutesField = STARTMINUTES;
+    private Integer secondsField = STARTSECONDS;
+    private Integer secondsLeft = (STARTMINUTES * 60) + STARTSECONDS;
 
-    private Integer minutesField;
-    private Integer secondsField;
-
-    private Integer secondsLeft;
-
-    CountDownTimer()
-    {
-        minutesField = STARTMINUTES;
-        secondsField = STARTSECONDS;
-        secondsLeft = (minutesField * 60) + secondsField;
-    }
-
-    public void update(Text timer)
+    public void tick()
     {
         secondsLeft--;
         minutesField = secondsLeft / 60;
         secondsField = secondsLeft % 60;
-        timer.setText(getCurrentTime());
     }
 
-    private String getCurrentTime()
+    public void stopAndReset()
+    {
+        minutesField = STARTMINUTES;
+        secondsField = STARTSECONDS;
+        secondsLeft = (STARTMINUTES * 60) + STARTSECONDS;
+    }
+
+    public String getCurrentTime()
     {
         return String.format(timerFormat, minutesField, secondsField);
     }
@@ -45,14 +44,37 @@ public class Controller
     private Button startButton;
 
     @FXML
-    private Text timer;
+    private Button stopButton;
+
+    @FXML
+    private Text timerText;
+
+    private CountDownTimer timer = new CountDownTimer();
+    private Timeline timeline = null;
 
     public void startTimer()
     {
-        CountDownTimer counter = new CountDownTimer();
-        Timeline timeline = new Timeline();
-        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), actionEvent -> counter.update(timer)));
+        if (timeline != null)
+            return;
+
+        timeline = new Timeline();
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), actionEvent ->
+        {
+            timer.tick();
+            timerText.setText(timer.getCurrentTime());
+        }));
+
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.playFromStart();
+    }
+
+    public void stopTimer()
+    {
+        if (timeline == null)
+            return;
+        timeline.stop();
+        timeline = null;
+        timer.stopAndReset();
+        timerText.setText(timer.getCurrentTime());
     }
 }
