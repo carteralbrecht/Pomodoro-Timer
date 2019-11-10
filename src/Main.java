@@ -34,7 +34,6 @@ public class Main extends Application
 
         Parent root = FXMLLoader.load(getClass().getResource("Pomodoro.fxml"));
         Scene scene = new Scene(root);
-        System.out.println(root.getLayoutX() + root.getLayoutY());
 
         stage.setScene(scene);
         stage.show();
