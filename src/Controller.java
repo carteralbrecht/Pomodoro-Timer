@@ -1,40 +1,81 @@
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
+import java.util.*;
 
-import java.sql.Time;
-
-class CountDownTimer
+class Pomodoro
 {
     private static final String timerFormat = "%02d:%02d";
-    private static final Integer STARTMINUTES = 0;
-    private static final Integer STARTSECONDS = 5;
-    private Integer minutesField = STARTMINUTES;
-    private Integer secondsField = STARTSECONDS;
-    private Integer secondsLeft = (STARTMINUTES * 60) + STARTSECONDS;
+    private int secondsLeft;
+    private int workPeriod;
+    private int shortBreak;
+    private int longBreak;
+    private int cycleCount = 0;
+    private Timer timer = null;
+    StringProperty currentTime = new SimpleStringProperty();
 
-    public void tick()
+    Pomodoro(int workPeriodInMinutes, int shortBreakInMinutes, int longBreakInMinutes)
     {
-        secondsLeft--;
-        minutesField = secondsLeft / 60;
-        secondsField = secondsLeft % 60;
+        this.workPeriod = workPeriodInMinutes;
+        this.shortBreak = shortBreakInMinutes;
+        this.longBreak = longBreakInMinutes;
+        this.secondsLeft = workPeriod;
+        updateCurrentTime();
+    }
+
+    private void tick()
+    {
+        if (--secondsLeft == 0)
+            setupNextCycle();
+
+        updateCurrentTime();
+    }
+
+    public void start()
+    {
+        if (timer != null)
+            return;
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                tick();
+            }
+        }, 1000, 1000);
     }
 
     public void stopAndReset()
     {
-        minutesField = STARTMINUTES;
-        secondsField = STARTSECONDS;
-        secondsLeft = (STARTMINUTES * 60) + STARTSECONDS;
+        timer.cancel();
+        resetSeconds();
+        timer = null;
+        updateCurrentTime();
     }
 
-    public String getCurrentTime()
+    private void updateCurrentTime()
     {
-        return String.format(timerFormat, minutesField, secondsField);
+        this.currentTime.setValue(String.format(timerFormat, secondsLeft / 60, secondsLeft % 60));
+    }
+
+    private void setupNextCycle()
+    {
+        cycleCount++;
+        resetSeconds();
+    }
+
+    private void resetSeconds()
+    {
+        if (cycleCount % 3 == 0)
+            secondsLeft = workPeriod;
+        if (cycleCount % 3 == 1)
+            secondsLeft = shortBreak;
+        if (cycleCount % 3 == 2)
+            secondsLeft = longBreak;
     }
 }
 
@@ -49,32 +90,29 @@ public class Controller
     @FXML
     private Text timerText;
 
-    private CountDownTimer timer = new CountDownTimer();
-    private Timeline timeline = null;
+    private Pomodoro pomodoro = null;
 
-    public void startTimer()
+    private void startTimer(int workPeriodInMinutes, int shortBreakInMinutes, int longBreakInMinutes)
     {
-        if (timeline != null)
+        if (pomodoro != null)
             return;
-
-        timeline = new Timeline();
-        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), actionEvent ->
-        {
-            timer.tick();
-            timerText.setText(timer.getCurrentTime());
-        }));
-
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.playFromStart();
+        pomodoro = new Pomodoro(workPeriodInMinutes, shortBreakInMinutes, longBreakInMinutes);
+        timerText.textProperty().bind(pomodoro.currentTime);
+        pomodoro.start();
+    }
+    
+    public void onStartButtonClick()
+    {
+        startTimer(10, 3, 7 );
     }
 
-    public void stopTimer()
+    private void stopTimer()
     {
-        if (timeline == null)
-            return;
-        timeline.stop();
-        timeline = null;
-        timer.stopAndReset();
-        timerText.setText(timer.getCurrentTime());
+        pomodoro.stopAndReset();
+    }
+
+    public void onStopButtonClick()
+    {
+        stopTimer();
     }
 }
